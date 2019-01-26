@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
     <AtlasProgress />
   </div>
 </template>
@@ -22,7 +21,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: whitesmoke;
-  margin-top: 60px;
+  padding-top: 60px;
   background-color: black;
   font-size: 10pt;
 }

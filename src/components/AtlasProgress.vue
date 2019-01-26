@@ -2,7 +2,7 @@
   <div>
     <div class="tier" v-for="tier in tiers">
       <div><h3>Tier {{ tier.number }} </h3>
-        <a href="#" @click="toggleClicked(tier.number)">
+        <a @click="toggleClicked(tier.number)">
           <span v-if="allChecked[tier.number - 1]">Uncheck all</span>
           <span v-else>Check all</span>
         </a>
@@ -95,6 +95,7 @@ export default {
       this.$cookie.set('haveMaps', this.have.join(','), { expires: '1Y' });
       this.$cookie.set('completedMaps', this.completed.join(','), { expires: '1Y' });
       this.$cookie.set('bonusedMaps', this.bonused.join(','), { expires: '1Y' });
+      this.$cookie.set('allChecked', this.allChecked.join(','), { expires: '1Y' });
     }
   },
   computed: {
@@ -109,6 +110,7 @@ export default {
     const haveCookie = this.$cookie.get('haveMaps');
     const completedCookie = this.$cookie.get('completedMaps');
     const bonusedCookie = this.$cookie.get('bonusedMaps');
+    const allCheckedCookie = this.$cookie.get('allChecked');
     
     if (haveCookie) {
       const haveCookieArray = haveCookie.split(',').map(i => stringToBoolean(i));
@@ -123,6 +125,11 @@ export default {
     if (bonusedCookie) {
       const bonusedCookieArray = bonusedCookie.split(',').map(i => stringToBoolean(i));
       this.bonused = bonusedCookieArray;
+    }
+
+    if (allCheckedCookie) {
+      const allCheckedCookieArray = allCheckedCookie.split(',').map(i => stringToBoolean(i));
+      this.allChecked = allCheckedCookieArray;
     }
   }
 }
@@ -151,6 +158,8 @@ h3 {
 
 a, a:visited {
   color: whitesmoke;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 h3 {
