@@ -64,20 +64,21 @@ export default {
     updateHave (event) {
       const id = convertId(event.target.id);      
       this.have.splice(id, 1, event.target.checked);
-      this.$cookie.set('haveMaps', this.have.join(','), { expires: '1Y' });
+      localStorage.setItem('haveMaps', this.have);      
     },
 
     updateCompleted (event) {
       const id = convertId(event.target.id);  
       this.completed.splice(id, 1, event.target.checked);
-      this.$cookie.set('completedMaps', this.completed.join(','), { expires: '1Y' });
+      localStorage.setItem('completedMaps', this.completed);
     },
 
     updateBonused (event) {
       const id = convertId(event.target.id);
       this.bonused.splice(id, 1, event.target.checked);
-      this.$cookie.set('bonusedMaps', this.bonused.join(','), { expires: '1Y' });
+      localStorage.setItem('bonusedMaps', this.bonused);
     },
+
     toggleClicked (tierNumber) {
       const checkboxesInTier = Array.from(document.getElementsByClassName('tier-' + tierNumber));
       const checked = this.allChecked[tierNumber - 1];
@@ -92,10 +93,10 @@ export default {
         this.bonused.splice(m.id, 1, !checked);
       });
 
-      this.$cookie.set('haveMaps', this.have.join(','), { expires: '1Y' });
-      this.$cookie.set('completedMaps', this.completed.join(','), { expires: '1Y' });
-      this.$cookie.set('bonusedMaps', this.bonused.join(','), { expires: '1Y' });
-      this.$cookie.set('allChecked', this.allChecked.join(','), { expires: '1Y' });
+      localStorage.setItem('haveMaps', this.have);
+      localStorage.setItem('completedMaps', this.completed);
+      localStorage.setItem('bonusedMaps', this.bonused);
+      localStorage.setItem('allChecked', this.allChecked);
     }
   },
   computed: {
@@ -107,29 +108,29 @@ export default {
     }
   },
   created () {
-    const haveCookie = this.$cookie.get('haveMaps');
-    const completedCookie = this.$cookie.get('completedMaps');
-    const bonusedCookie = this.$cookie.get('bonusedMaps');
-    const allCheckedCookie = this.$cookie.get('allChecked');
+    const haveMaps = localStorage.haveMaps;
+    const completedMaps = localStorage.completedMaps;
+    const bonusedMaps = localStorage.bonusedMaps;
+    const allChecked = localStorage.allChecked;
     
-    if (haveCookie) {
-      const haveCookieArray = haveCookie.split(',').map(i => stringToBoolean(i));
-      this.have = haveCookieArray;
+    if (haveMaps) {
+      const haveMapsArray = haveMaps.split(',').map(i => stringToBoolean(i));
+      this.have = haveMapsArray;      
     }
 
-    if (completedCookie) {
-      const completedCookieArray = completedCookie.split(',').map(i => stringToBoolean(i));
-      this.completed = completedCookieArray;
+    if (completedMaps) {
+      const completedMapsArray = completedMaps.split(',').map(i => stringToBoolean(i));
+      this.completed = completedMapsArray;
     }
 
-    if (bonusedCookie) {
-      const bonusedCookieArray = bonusedCookie.split(',').map(i => stringToBoolean(i));
-      this.bonused = bonusedCookieArray;
+    if (bonusedMaps) {
+      const bonusedMapsArray = bonusedMaps.split(',').map(i => stringToBoolean(i));
+      this.bonused = bonusedMapsArray;
     }
 
-    if (allCheckedCookie) {
-      const allCheckedCookieArray = allCheckedCookie.split(',').map(i => stringToBoolean(i));
-      this.allChecked = allCheckedCookieArray;
+    if (allChecked) {
+      const allCheckedArray = allChecked.split(',').map(i => stringToBoolean(i));
+      this.allChecked = allCheckedArray;
     }
   }
 }
