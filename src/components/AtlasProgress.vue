@@ -28,7 +28,13 @@
             </td>
             <td class="map left" :class="{ 'done': completed[map.id] }">{{ map.name }}</td>
             <td class="left" :class="{ 'done': have[map.id] }">
-              <div v-if="map.upgradesFrom.length > 0">{{ map.upgradesFrom.join(', ') }}</div>
+              <div v-if="map.upgradesFrom.length > 0">
+                <MapDisplay v-for="(upgradeMap, index) in map.upgradesFrom" 
+                  :length="map.upgradesFrom.length"
+                  :index="index" 
+                  :mapName="upgradeMap"
+                  :hasMap="hasMap(upgradeMap)" />
+              </div>
               <div v-if="completed[map.id]"></div>
             </td>
           </tr>     
@@ -41,9 +47,13 @@
 <script>
 import maps from '../maps.js'
 import tiers from '../tiers.js'
+import MapDisplay from './MapDisplay.vue'
 
 export default {
   name: 'AtlasProgress',
+  components: {
+    MapDisplay,
+  },
   data () {
     return {
       have: new Array(100).fill(false),
@@ -97,15 +107,22 @@ export default {
       localStorage.setItem('completedMaps', this.completed);
       localStorage.setItem('bonusedMaps', this.bonused);
       localStorage.setItem('allChecked', this.allChecked);
+    },
+
+    hasMap (mapName) {
+     const map = this.maps.filter(m => m.name == mapName);
+     
+     return (map[0] ? this.have[map[0].id] : false);
     }
   },
   computed: {
     maps () {
       return maps;
     },
+
     tiers () {
       return tiers;
-    }
+    },
   },
   created () {
     const haveMaps = localStorage.haveMaps;

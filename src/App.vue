@@ -1,16 +1,19 @@
 <template>
   <div id="app">
+    <CharacterSelection />
     <AtlasProgress />
   </div>
 </template>
 
 <script>
 import AtlasProgress from './components/AtlasProgress.vue'
+import CharacterSelection from './components/CharacterSelection.vue'
 
 export default {
   name: 'app',
   components: {
-    AtlasProgress
+    AtlasProgress,
+    CharacterSelection
   }
 }
 </script>
