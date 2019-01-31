@@ -54,9 +54,10 @@ export default {
   components: {
     MapDisplay,
   },
+  props: ['items'],
   data () {
     return {
-      have: new Array(100).fill(false),
+      have: this.items,
       completed: new Array(100).fill(false),
       bonused: new Array(100).fill(false),
       allChecked: new Array(16).fill(false),
@@ -123,6 +124,11 @@ export default {
     tiers () {
       return tiers;
     },
+  },
+  watch: {
+    items (items) {
+      this.have = items;
+    }
   },
   created () {
     const haveMaps = localStorage.haveMaps;

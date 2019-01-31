@@ -29,7 +29,7 @@ const maps = [
   { id: 27, name: 'Courtyard', tier: 4, upgradesFrom: ['Shipyard', 'Peninsula'], upgradesTo: ['Gardens'], isUnique: false },
   { id: 28, name: 'Barrows', tier: 4, upgradesFrom: ['Bone Crypt'], upgradesTo: ['Vaal Pyramid'], isUnique: false },
   { id: 29, name: 'Beach', tier: 4, upgradesFrom: ['Bone Crypt', 'Cage'], upgradesTo: ['Vaal Pyramid', 'City Square'], isUnique: false },
-  { id: 30, name: 'Undergound Sea', tier: 5, upgradesFrom: ['Marshes'], upgradesTo: ['Volcano'], isUnique: false },
+  { id: 30, name: 'Underground Sea', tier: 5, upgradesFrom: ['Marshes'], upgradesTo: ['Volcano'], isUnique: false },
   { id: 31, name: 'Jungle Valley', tier: 5, upgradesFrom: ['Marshes', 'Crater'], upgradesTo: ['Precinct'], isUnique: false },
   { id: 32, name: 'Mausoleum', tier: 5, upgradesFrom: ['Crater'], upgradesTo: ['Precinct', 'Sulphur Vents'], isUnique: false },
   { id: 33, name: 'Alleyways', tier: 5, upgradesFrom: ['Glacier'], upgradesTo: ['Ashen Wood'], isUnique: false },
