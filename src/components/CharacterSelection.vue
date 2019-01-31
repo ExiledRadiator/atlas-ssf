@@ -37,8 +37,10 @@
           </div>
         </div>
       </fieldset>
-
       <button type="button" @click="getItems" class="input">Load Maps</button>
+      <div class="note">
+        Note: Clicking 'Load Maps' will overwite the checkboxes in the 'Have' column.
+      </div>
     </div>
   </div>
 </template>
@@ -66,15 +68,6 @@ export default {
       localStorage.setItem('character', JSON.stringify(this.character));
       this.getStashes();
     },
-
-    // addMapsFromInv (response) {      
-    //   if (response.data) {       
-    //     const items = response.data.items;
-    //     const inventoryItems = items.filter(i => i.inventoryId === "MainInventory");
-    //     const maps = inventoryItems.filter(i => i.category.maps && i.typeLine.includes("Map"));
-    //     this.foundMaps = maps;        
-    //   }
-    // },
 
     addMaps (result) {            
       if (result.data) {
@@ -117,6 +110,7 @@ export default {
       this.stashes.forEach(id => {
         // filter out the 'inv' entry and handle separately
         const parsedId = parseInt(id);
+        
         if (!isNaN(parsedId)) {
           this.promises.push(axios.get(baseUrl, {
             params: {
@@ -238,6 +232,7 @@ input[type="text"] {
 }
 
 button {
+  margin-top: 5px;
   float: right;
 }
 
@@ -264,6 +259,11 @@ div.inputs {
 div.input {
   flex-grow: 1;
   padding: 10px;
+}
+
+div.note {
+  margin-top: 5px;
+  margin-left: 20px;
 }
 
 #sessionId {

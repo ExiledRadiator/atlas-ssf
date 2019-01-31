@@ -29,8 +29,6 @@ export default {
       const matchingMapIds = items.map(i => {
         const matchedMap = maps.find(m => i.typeLine.includes(m.name));
         if (matchedMap) {
-          console.log(i.typeLine);
-          
           return matchedMap.id;
         }
       });
@@ -42,7 +40,6 @@ export default {
       uniqueMapIds.forEach(i => newArray[i] = true);
       this.items = newArray;
       localStorage.setItem('haveMaps', this.items);
-      console.log(uniqueMapIds);
     }
   }
 }
