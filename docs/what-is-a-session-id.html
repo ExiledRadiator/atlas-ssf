@@ -1,44 +1,59 @@
-<html>
-  <h2>What is a Session Id?</h2>
-  <p>
-    A session ID is a unique, randomly-generated string of numbers and letters given to you by a website after you log in.  
-    The website uses this Session ID in place of your username and password to authenticate you while you're logged in.  
-    Once you log out, the current Session Id is destroyed and no longer valid.
-  </p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title>atlas-ssf - What is a Session Id?</title>
+    <style>
+      body {
+        background: black;
+        color: whitesmoke;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>What is a Session Id?</h2>
+    <p>
+      A session ID is a unique, randomly-generated string of numbers and letters given to you by a website after you log in.  
+      The website uses this Session ID in place of your username and password to authenticate you while you're logged in.  
+      Once you log out, the current Session Id is destroyed and no longer valid.
+    </p>
 
-  <h2>Is it safe to give out my Session Id?</h2>
-  <p>
-    In general, <b>no</b>.  If you were to post your POESESSID (what pathofexile.com calls their Session Id) on a forum somewhere, anyone with sufficient technical skill who sees it can impersonate you
-    on pathofexile.com, without having to enter or know your password.  They could do things like post messages on the official forums or spend any Points sitting in your account.  This would be possible until
-    you logged out of your account on pathofexile.com, invalidating that POESESSID.
-  </p>
+    <h2>Is it safe to give out my Session Id?</h2>
+    <p>
+      In general, <b>no</b>.  If you were to post your POESESSID (what pathofexile.com calls their Session Id) on a forum somewhere, anyone with sufficient technical skill who sees it can impersonate you
+      on pathofexile.com, without having to enter or know your password.  They could do things like post messages on the official forums or spend any Points sitting in your account.  This would be possible until
+      you logged out of your account on pathofexile.com, invalidating that POESESSID.
+    </p>
 
-  <h2>So why are you asking for my POESESSID?</h2>
-  <p>
-    Your characters' inventories and any non-public Stash tabs are private and specific to your account.   GGG doesn't provide that information publicly, and requires you to log into your account
-    to view it.  This website uses your POESESSID to obtain this private information, specifically:
-    <ul>
-      <li>List of characters in your account</li>
-      <li>Items equipped on your characters or in their inventories</li>
-      <li>Contents of any stash tabs</li>
-    </ul>
+    <h2>So why are you asking for my POESESSID?</h2>
+    <p>
+      Your characters' inventories and any non-public Stash tabs are private and specific to your account.   GGG doesn't provide that information publicly, and requires you to log into your account
+      to view it.  This website uses your POESESSID to obtain this private information, specifically:
+      <ul>
+        <li>List of characters in your account</li>
+        <li>Items equipped on your characters or in their inventories</li>
+        <li>Contents of any stash tabs</li>
+      </ul>
 
-    Your POESESSID and account name are sent to a proxy server over HTTPS.  This step is necessary because GGG has not enabled 
-    <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">Cross-origin Resource Sharing (CORS)</a>, meaning this website cannot directly request information from pathofexile.com.  The proxy server
-    uses your account name and POESESSID to request the information above, and sends it back to this website for display (again over HTTPS).  At no time does the proxy server log or otherwise store any information.
-  </p>
+      Your POESESSID and account name are sent to a proxy server over HTTPS.  This step is necessary because GGG has not enabled 
+      <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">Cross-origin Resource Sharing (CORS)</a>, meaning this website cannot directly request information from pathofexile.com.  The proxy server
+      uses your account name and POESESSID to request the information above, and sends it back to this website for display (again over HTTPS).  At no time does the proxy server log or otherwise store any information.
+    </p>
 
-  <p>
-    This website utilizes your browser's local storage to remember information after you navigate away from the page or close your browser, including your POESESSID and account name.
-  </p>
+    <p>
+      This website utilizes your browser's local storage to remember information after you navigate away from the page or close your browser, including your POESESSID and account name.
+    </p>
 
-  <h2>I'm uncomfortable!</h2>
-  <p>No problem.  You only need to provide your POESESSID if you want to automatically update the maps you have based on what's in your inventory or stashes.  You can just manually keep track.</p>
+    <h2>I'm uncomfortable!</h2>
+    <p>No problem.  You only need to provide your POESESSID if you want to automatically update the maps you have based on what's in your inventory or stashes.  You can just manually keep track.</p>
 
-  <h2>How do I find my POESESSID?</h2>
-  <p>
-    The process varies slightly between browsers, but always starts by going to <a href="https://www.pathofexile.com">pathofexile.com</a> and logging in.  Once logged in, open the Developer console and look at your cookies.
-    As part of the log in process, pathofexile.com will have set a cookie called "POESESSID".  Copy that cookie's value and put it in the box on this website.  
-    Remember, don't publicly share this information.  And if you ever want to revoke or invalidate it, all you have to do is log out of pathofexile.com.
-  </p>
+    <h2>How do I find my POESESSID?</h2>
+    <p>
+      The process varies slightly between browsers, but always starts by going to <a href="https://www.pathofexile.com">pathofexile.com</a> and logging in.  Once logged in, open the Developer console and look at your cookies.
+      As part of the log in process, pathofexile.com will have set a cookie called "POESESSID".  Copy that cookie's value and put it in the box on this website.  
+      Remember, don't publicly share this information.  And if you ever want to revoke or invalidate it, all you have to do is log out of pathofexile.com.
+    </p>
+  </body>
 </html>
