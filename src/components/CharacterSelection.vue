@@ -39,7 +39,8 @@
       </fieldset>
       <button type="button" @click="getItems" class="input">Load Maps</button>
       <div class="note">
-        Note: Clicking 'Load Maps' will overwite the checkboxes in the 'Have' column.
+          Note: Clicking 'Load Maps' will overwite the checkboxes in the 'Have' column.<br />
+          <b>Also Note</b>: Premium 'Maps' stash tabs currently don't return any information.  GGG plz.
       </div>
     </div>
   </div>
