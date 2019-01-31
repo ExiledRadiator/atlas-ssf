@@ -31,7 +31,7 @@
           <input type="checkbox" class="stash-checkbox" id="inventory" v-model="stashes" value="inv">
           <label for="inventory" class="checkbox" checked>Character Inventory</label>
           </div>
-          <div v-for="tab in tabs" class="stash">
+          <div v-for="tab in tabs" :key="tab.id" class="stash">
             <input type="checkbox" class="stash-checkbox" :id="tab.n" v-model="stashes" :value="tab.i">
             <label :for="tab.n" class="checkbox">{{ tab.n }}</label>
           </div>
