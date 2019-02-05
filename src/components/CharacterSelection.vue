@@ -1,6 +1,6 @@
 <template>
   <div class="inputs">
-    <div class="input">
+    <div class="input" id="account">
       <fieldset>
         <legend>Account Information</legend>
         <label for="sessionId" class="text">POESESSID <a href="what-is-a-session-id.html">What's this?</a></label>
@@ -13,7 +13,7 @@
       <button type="button" @click="getCharacters" class="input">Load Characters</button>
     </div>
 
-    <div class="input">
+    <div class="input" id="characters">
       <label for="characterList" class="text">Characters</label>
       <select v-model="character" @change="characterChanged" id="characterList">
         <option disabled>--Select a character--</option>
@@ -22,11 +22,13 @@
         </option>
       </select>
     </div>
+
+    <LegendDisplay id="legend" />
     
-    <div class="input big">
+    <div class="input big" id="locations">
       <fieldset>
         <legend>Locations to include</legend>
-        <div class="stashes">
+        <div id="stashes" class="stashes">
           <div class="stash" v-show="character.name">
             <input type="checkbox" class="stash-checkbox" id="inventory" v-model="stashes" value="inv">
             <label for="inventory" class="checkbox" checked>Character Inventory</label>
@@ -38,7 +40,7 @@
         </div>
       </fieldset>
       <button type="button" @click="getItems" class="input">Load Maps</button>
-      <div class="note">
+      <div class="note" id="notes">
           Note: Clicking 'Load Maps' will overwrite the checkboxes in the 'Have' column.<br />
           <b>Also Note</b>: Premium 'Maps' stash tabs currently don't return any information.  GGG plz.
       </div>
@@ -49,9 +51,13 @@
 <script>
 import axios from 'axios'
 import Api from '../APIService.js'
+import LegendDisplay from './LegendDisplay'
 
 export default {
   name: 'CharacterSelection',
+  components: {
+    LegendDisplay,
+  },
   data () {
     return {
       sessionId: '',
@@ -210,21 +216,43 @@ button {
   float: right;
 }
 
-div.stashes {
+#stashes {
   display: grid;
   grid-auto-flow: column;
   grid-template-rows: repeat(8, 20px);
   grid-template-columns: repeat(auto-fill, min-content);
 }
 
-div.stash {
+#locations {
+  grid-area: locations;
+}
+
+#account {
+  grid-area: account;
+}
+
+#legend {
+  grid-area: legend;
+  align-self: top;
+  justify-self: left;
+}
+
+#characters {
+  grid-area: characters;
+  justify-self: left;
+}
+
+.stash {
   margin: 2px;
 }
 
 div.inputs {
   display: grid;
   grid-template-columns: 1fr 1fr 2fr;
-  grid-auto-flow: row;
+  grid-template-rows: 100px 1fr;
+  grid-template-areas: 
+    "account characters locations"
+    "account legend locations";
   justify-items: center;
   width: 100%;
 }

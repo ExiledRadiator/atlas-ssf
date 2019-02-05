@@ -1,6 +1,8 @@
 <template>
   <span>
-    <span v-if="hasMap" class="dot"></span>{{ mapName }}<span v-if="addComma">, </span>
+    <span v-if="hasMap" class="dot icon"></span>
+    <span v-if="mapCount >= 3" class="icon">&#8593;</span>
+    <span>{{ mapName }}</span><span v-if="addComma">, </span>
   </span>
 </template>
 
@@ -11,7 +13,8 @@ export default {
     length: { type: Number, required: true },
     mapName: { type: String, required: true },
     index: { type: Number, required: true },
-    hasMap: { type: Boolean, required: true }
+    hasMap: { type: Boolean, required: true },
+    mapCount: {type: Number, required: true }
   },
   computed: {
     addComma () {
@@ -23,10 +26,15 @@ export default {
 
 <style>
 .dot {
-  height: 10px;
-  width: 10px;
+  height: 8px;
+  width: 8px;
   background-color: green;
   border-radius: 50%;
   display: inline-block;
+}
+
+.icon {
+  margin-left: 2px;
+  margin-right: 2px;
 }
 </style>

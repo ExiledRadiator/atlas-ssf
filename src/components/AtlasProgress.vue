@@ -43,7 +43,8 @@
                       :length="map.upgradesFrom.length"
                       :index="index" 
                       :mapName="upgradeMap"
-                      :hasMap="hasMap(upgradeMap)" />
+                      :hasMap="hasMap(upgradeMap)"
+                      :mapCount="mapCount(upgradeMap)" />
                   </div>
                   <div v-if="completed[map.id]"></div>
                 </td>
@@ -65,7 +66,7 @@ export default {
   components: {
     MapDisplay,
   },
-  props: ['items'],
+  props: ['items', 'mapCounts'],
   data () {
     return {
       have: this.items,
@@ -137,6 +138,26 @@ export default {
     hasMap (mapName) {
      const map = this.maps.filter(m => m.name == mapName);
      return (map[0] ? this.have[map[0].id] : false);
+    },
+
+    mapCount (mapName) {
+      const map = this.maps.filter(m => m.name == mapName);
+      
+      if (map.length == 0) {
+        return 0;
+      }
+
+      const mapId = map[0].id;
+      let count;
+
+      if (this.mapCounts[mapId]) {
+        count = this.mapCounts[mapId];
+      }
+      else {
+        count = 0;
+      }
+
+      return count;
     },
 
     shadeBackground (id) {
