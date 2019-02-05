@@ -1,46 +1,56 @@
 <template>
-  <div class="tiers">
-    <div class="tier" v-for="tier in tiers" :class="{'shaded': shadeBackground(tier.number)}">
-      <div>
-        <h3>Tier {{ tier.number }} </h3>
-        <a @click="toggleClicked(tier.number)">
-          <span v-if="allChecked[tier.number - 1]">Uncheck all</span>
-          <span v-else>Check all</span>
-        </a>
+  <div>
+    <div>
+      <a @click="toggleAllHidden" class="big-link">{{ hideAll ? 'Unhide all' : 'Hide all' }}</a>
+    </div>
+    <div class="tiers">
+      <div class="tier" v-for="tier in tiers" :class="{'shaded': shadeBackground(tier.number)}">
+        <div>
+          <h3>Tier {{ tier.number }} </h3>
+          <a @click="toggleClicked(tier.number)">
+            <span v-if="allChecked[tier.number - 1]">Uncheck all</span>
+            <span v-else>Check all</span>
+          </a>
+          <a @click="toggleHidden(tier.number)">
+            <span v-if="tierHidden[tier.number - 1]">Unhide</span>
+            <span v-else>Hide</span>
+          </a>
+        </div>
+
+          <table :class="{hidden: tierHidden[tier.number - 1]}">
+            <thead>
+              <th class="checkbox centered">Have</th>
+              <th class="checkbox centered">Compl.</th>
+              <th class="checkbox centered">Bonused</th>
+              <th class="map left">Map</th>
+              <th class="left">{{ tier.notes }}</th>
+            </thead>
+            <tbody>
+              <tr v-for="map in mapsInTier(tier.number)" :key="map.id">
+                <td class="checkbox centered" :class="'tier-' + tier.number">
+                  <input type="checkbox" :id="'have-' + map.id" :checked="have[map.id]" @input="updateHave">
+                </td>
+                <td class="checkbox centered" :class="'tier-' + tier.number">
+                  <input type="checkbox" :id="'completed-' + map.id" :checked="completed[map.id]" @input="updateCompleted">
+                </td>
+                <td class="checkbox centered" :class="'tier-' + tier.number">
+                  <input type="checkbox" :id="'bonused-' + map.id" :checked="bonused[map.id]" @input="updateBonused">
+                </td>
+                <td class="map left" :class="{ 'done': completed[map.id] }">{{ map.name }}</td>
+                <td class="left" :class="{ 'done': have[map.id] }">
+                  <div v-if="map.upgradesFrom.length > 0">
+                    <MapDisplay v-for="(upgradeMap, index) in map.upgradesFrom" 
+                      :length="map.upgradesFrom.length"
+                      :index="index" 
+                      :mapName="upgradeMap"
+                      :hasMap="hasMap(upgradeMap)" />
+                  </div>
+                  <div v-if="completed[map.id]"></div>
+                </td>
+              </tr>     
+            </tbody>
+          </table>
       </div>
-      <table>
-        <thead>
-          <th class="checkbox centered">Have</th>
-          <th class="checkbox centered">Compl.</th>
-          <th class="checkbox centered">Bonused</th>
-          <th class="map left">Map</th>
-          <th class="left">{{ tier.notes }}</th>
-        </thead>
-        <tbody>
-          <tr v-for="map in mapsInTier(tier.number)" :key="map.id">
-            <td class="checkbox centered" :class="'tier-' + tier.number">
-              <input type="checkbox" :id="'have-' + map.id" :checked="have[map.id]" @input="updateHave">
-            </td>
-            <td class="checkbox centered" :class="'tier-' + tier.number">
-              <input type="checkbox" :id="'completed-' + map.id" :checked="completed[map.id]" @input="updateCompleted">
-            </td>
-            <td class="checkbox centered" :class="'tier-' + tier.number">
-              <input type="checkbox" :id="'bonused-' + map.id" :checked="bonused[map.id]" @input="updateBonused">
-            </td>
-            <td class="map left" :class="{ 'done': completed[map.id] }">{{ map.name }}</td>
-            <td class="left" :class="{ 'done': have[map.id] }">
-              <div v-if="map.upgradesFrom.length > 0">
-                <MapDisplay v-for="(upgradeMap, index) in map.upgradesFrom" 
-                  :length="map.upgradesFrom.length"
-                  :index="index" 
-                  :mapName="upgradeMap"
-                  :hasMap="hasMap(upgradeMap)" />
-              </div>
-              <div v-if="completed[map.id]"></div>
-            </td>
-          </tr>     
-        </tbody>
-      </table>
     </div>
   </div>
 </template>
@@ -62,8 +72,8 @@ export default {
       completed: new Array(100).fill(false),
       bonused: new Array(100).fill(false),
       allChecked: new Array(16).fill(false),
-      checkAllMsg: 'Check all',
-      uncheckAllMsg: 'Uncheck all',
+      tierHidden: new Array(16).fill(false),
+      hideAll: false
     }
   },
   methods: {
@@ -97,7 +107,7 @@ export default {
       const mapsInTier = this.maps.filter(m => m.tier == tierNumber);
       
       checkboxesInTier.forEach(box => box.checked = !checked);
-      this.allChecked.splice(tierNumber - 1, 1, !checked)
+      this.allChecked.splice(tierNumber - 1, 1, !checked);
       
       mapsInTier.forEach(m => {
         this.have.splice(m.id, 1, !checked);
@@ -109,6 +119,18 @@ export default {
       localStorage.setItem('completedMaps', this.completed);
       localStorage.setItem('bonusedMaps', this.bonused);
       localStorage.setItem('allChecked', this.allChecked);
+    },
+
+    toggleHidden (tierNumber) {
+      const hidden = this.tierHidden[tierNumber - 1];
+      this.tierHidden.splice(tierNumber - 1, 1, !hidden);
+
+      localStorage.setItem('tierHidden', this.tierHidden);
+    },
+
+    toggleAllHidden () {
+      this.hideAll = !this.hideAll;
+      this.tierHidden = new Array(16).fill(this.hideAll);
     },
 
     hasMap (mapName) {
@@ -189,8 +211,7 @@ function stringToBoolean(str) {
 
 <style>
 h3 {
-  text-align: left;
-  padding-top: 30px;
+  display: inline;
 }
 
 .done {
@@ -201,11 +222,7 @@ a, a:visited {
   color: whitesmoke;
   text-decoration: underline;
   cursor: pointer;
-}
-
-h3 {
-  display: inline;
-  padding-right: 20px;
+  padding-left: 20px;
 }
 
 .tiers {
@@ -246,10 +263,18 @@ td.map, th.map {
 }
 
 input[type=checkbox] {
-  transform: scale(2);
+  transform: scale(1.5);
 }
 
 .shaded {
   background: #262627;
+}
+
+.hidden {
+  display: none;
+}
+
+.big-link {
+  font-size: 12pt;
 }
 </style>

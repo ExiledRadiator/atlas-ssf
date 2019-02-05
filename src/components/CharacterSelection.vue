@@ -27,11 +27,11 @@
       <fieldset>
         <legend>Locations to include</legend>
         <div class="stashes">
-          <div class="stash">
-          <input type="checkbox" class="stash-checkbox" id="inventory" v-model="stashes" value="inv">
-          <label for="inventory" class="checkbox" checked>Character Inventory</label>
+          <div class="stash" v-show="character.name">
+            <input type="checkbox" class="stash-checkbox" id="inventory" v-model="stashes" value="inv">
+            <label for="inventory" class="checkbox" checked>Character Inventory</label>
           </div>
-          <div v-for="tab in tabs" :key="tab.id" class="stash">
+          <div v-for="tab in stashTabs" :key="tab.id" class="stash">
             <input type="checkbox" class="stash-checkbox" :id="tab.n" v-model="stashes" :value="tab.i">
             <label :for="tab.n" class="checkbox">{{ tab.n }}</label>
           </div>
@@ -58,11 +58,9 @@ export default {
       accountName: '',
       characters: [],
       character: '--Select a character--',
-      league: '',
       stashes: ['inv'],
-      tabs: [],
+      stashTabs: [],
       foundMaps: [],
-      promises: [],
       api: null
     }
   },
@@ -72,8 +70,8 @@ export default {
       
       this.api.getStashes(this.character.league)
       .then(tabs => {
-        this.tabs = tabs;
-        localStorage.setItem('stashTabs', JSON.stringify(this.tabs));
+        this.stashTabs = tabs;
+        localStorage.setItem('stashTabs', JSON.stringify(this.stashTabs));
       })
       .catch(error => {
         // handle error
@@ -81,12 +79,14 @@ export default {
       });
     },
 
-    addMaps (result) {            
+    addMaps (result) {          
       if (result.data) {
         let items;
         
         // treat response from inventory differently
-        if (!result.data.items[0].inventoryId.includes("Stash")) {
+        // inventory call responds with information about character
+        // stash calls don't
+        if (result.data.character) {
           items = result.data.items.filter(i => i.inventoryId === "MainInventory");
         }
         else {
@@ -113,8 +113,8 @@ export default {
       })
       .then(() => this.api.getStashes(this.character.league))
       .then(tabs => {
-        this.tabs = tabs;
-        localStorage.setItem('stashTabs', JSON.stringify(this.tabs));
+        this.stashTabs = tabs;
+        localStorage.setItem('stashTabs', JSON.stringify(this.stashTabs));
       })
       .catch(error => {
         // handle error
@@ -129,10 +129,11 @@ export default {
       .then(results => {
         results.forEach(r => this.addMaps(r));
         this.$emit('items-loaded', this.foundMaps);
+        localStorage.setItem('stashes', JSON.stringify(this.stashes));
       })
       .catch(error => {
         // handle error
-        console.log(error.response);        
+        console.log(error);        
       });
     }
   },
@@ -141,7 +142,8 @@ export default {
     const accountName = localStorage.getItem('accountName');
     const characters = JSON.parse(localStorage.getItem('characters'));
     const character = JSON.parse(localStorage.getItem('character'));
-    const tabs = JSON.parse(localStorage.getItem('stashTabs'));
+    const stashTabs = JSON.parse(localStorage.getItem('stashTabs'));
+    const stashes = JSON.parse(localStorage.getItem('stashes'));
 
     if (sessionId) {
       this.sessionId = sessionId;
@@ -159,14 +161,18 @@ export default {
       this.character = character;
     }
 
-    if (tabs) {
-      this.tabs = tabs;
+    if (stashTabs) {
+      this.stashTabs = stashTabs;
     }
 
     if (!this.api) {
       if (this.sessionId && this.accountName) {
         this.api = new Api(this.accountName, this.sessionId);
       }
+    }
+
+    if (stashes) {
+      this.stashes = stashes;
     }
   }
 }
