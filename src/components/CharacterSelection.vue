@@ -49,7 +49,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import Api from '../APIService.js'
 import LegendDisplay from './LegendDisplay'
 
@@ -249,7 +248,7 @@ button {
 div.inputs {
   display: grid;
   grid-template-columns: 1fr 1fr 2fr;
-  grid-template-rows: 100px 1fr;
+  grid-template-rows: 93px 1fr;
   grid-template-areas: 
     "account characters locations"
     "account legend locations";
