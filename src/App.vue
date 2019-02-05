@@ -57,5 +57,6 @@ export default {
   padding-top: 30px;
   background-color: black;
   font-size: 10pt;
+  min-width: 715px;
 }
 </style>

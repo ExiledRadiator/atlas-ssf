@@ -73,7 +73,8 @@ export default {
       bonused: new Array(100).fill(false),
       allChecked: new Array(16).fill(false),
       tierHidden: new Array(16).fill(false),
-      hideAll: false
+      hideAll: false,
+      tierColumns: 2
     }
   },
   methods: {
@@ -139,20 +140,42 @@ export default {
     },
 
     shadeBackground (id) {
-      const row = Math.ceil(id / 2);
+      const row = Math.ceil(id / this.tierColumns);
       let shade;
 
-      if ((row % 2 == 1) && (id % 2 == 0)) {
-        shade = true;
-      }
-      else if ((row % 2 == 0) && (id % 2 == 1)) {
-        shade = true;
+      if (this.tierColumns % 2 == 0) {
+        if ((row % 2 == 1) && (id % 2 == 0)) {
+          shade = true;
+        }
+        else if ((row % 2 == 0) && (id % 2 == 1)) {
+          shade = true;
+        }
+        else {
+          shade = false;
+        }
       }
       else {
-        shade = false;
+        if ((row % 2 == 1) && (id % 2 == 0)) {
+          shade = true;
+        }
+        else if ((row % 2 == 0) && (id % 2 == 0)) {
+          shade = true;
+        }
+        else {
+          shade = false;
+        }
       }
 
       return shade;
+    },
+
+    onResize () {
+      if (window.innerWidth < 800) {
+        this.tierColumns = 1;
+      }
+      else {
+        this.tierColumns = 2;
+      }
     }
   },
   computed: {
@@ -169,6 +192,7 @@ export default {
       this.have = items;
     }
   },
+
   created () {
     const haveMaps = localStorage.haveMaps;
     const completedMaps = localStorage.completedMaps;
@@ -194,6 +218,12 @@ export default {
       const allCheckedArray = allChecked.split(',').map(i => stringToBoolean(i));
       this.allChecked = allCheckedArray;
     }
+
+    window.addEventListener('resize', this.onResize);
+  },
+
+  beforeDestroy () {
+    window.removeEventListener('resize', this.onResize)
   }
 }
 
@@ -235,7 +265,6 @@ a, a:visited {
 }
 
 .tier {
-  min-width: 485px;
   max-width: 600px;
   padding: 10px;
 }
@@ -276,5 +305,16 @@ input[type=checkbox] {
 
 .big-link {
   font-size: 12pt;
+}
+
+@media (max-width: 800px) {
+  .tiers {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+    gap: 5px 20px;
+    padding-top: 30px;
+    padding-left: 10px;
+  }
 }
 </style>
