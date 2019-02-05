@@ -117,8 +117,21 @@ export default {
         localStorage.setItem('stashTabs', JSON.stringify(this.stashTabs));
       })
       .catch(error => {
-        // handle error
-        console.log(error.response);
+        const errorUrl = error.request.responseURL;
+
+        if (errorUrl.includes('/api/characters')) {
+          console.log('Error retrieving characters.  Confirm your POESESSID and account name');
+          this.characters = [];
+          this.character = '--Select a character--';
+          this.stashTabs = [];
+
+          localStorage.setItem('characters', JSON.stringify(this.characters));
+          localStorage.setItem('character', JSON.stringify(this.character));
+          localStorage.setItem('stashTabs', JSON.stringify(this.stashTabs));
+        }
+        else if (errorUrl.includes('/api/stashes')) {
+          console.log('Error retrieving stashes.  Confirm your account name is correct.');          
+        }
       });
     },
 
