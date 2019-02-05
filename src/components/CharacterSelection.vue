@@ -162,6 +162,12 @@ export default {
     if (tabs) {
       this.tabs = tabs;
     }
+
+    if (!this.api) {
+      if (this.sessionId && this.accountName) {
+        this.api = new Api(this.accountName, this.sessionId);
+      }
+    }
   }
 }
 </script>
