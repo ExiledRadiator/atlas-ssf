@@ -219,6 +219,7 @@ export default {
     const completedMaps = localStorage.completedMaps;
     const bonusedMaps = localStorage.bonusedMaps;
     const allChecked = localStorage.allChecked;
+    const tierHidden = localStorage.tierHidden;
     
     if (haveMaps) {
       const haveMapsArray = haveMaps.split(',').map(i => stringToBoolean(i));
@@ -239,6 +240,12 @@ export default {
       const allCheckedArray = allChecked.split(',').map(i => stringToBoolean(i));
       this.allChecked = allCheckedArray;
     }
+
+    if (tierHidden) {
+      const tierHiddenArray = tierHidden.split(',').map(i => stringToBoolean(i));
+      this.tierHidden = tierHiddenArray;
+    }
+
 
     window.addEventListener('resize', this.onResize);
   },
