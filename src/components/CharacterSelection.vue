@@ -63,7 +63,7 @@ export default {
       tabs: [],
       foundMaps: [],
       promises: [],
-      api: {}
+      api: null
     }
   },
   methods: {
