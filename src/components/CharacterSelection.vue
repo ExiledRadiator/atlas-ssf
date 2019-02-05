@@ -39,7 +39,7 @@
       </fieldset>
       <button type="button" @click="getItems" class="input">Load Maps</button>
       <div class="note">
-          Note: Clicking 'Load Maps' will overwite the checkboxes in the 'Have' column.<br />
+          Note: Clicking 'Load Maps' will overwrite the checkboxes in the 'Have' column.<br />
           <b>Also Note</b>: Premium 'Maps' stash tabs currently don't return any information.  GGG plz.
       </div>
     </div>
@@ -48,6 +48,7 @@
 
 <script>
 import axios from 'axios'
+import Api from '../APIService.js'
 
 export default {
   name: 'CharacterSelection',
@@ -61,13 +62,23 @@ export default {
       stashes: ['inv'],
       tabs: [],
       foundMaps: [],
-      promises: []
+      promises: [],
+      api: {}
     }
   },
   methods: {
     characterChanged () {
       localStorage.setItem('character', JSON.stringify(this.character));
-      this.getStashes();
+      
+      this.api.getStashes(this.character.league)
+      .then(tabs => {
+        this.tabs = tabs;
+        localStorage.setItem('stashTabs', JSON.stringify(this.tabs));
+      })
+      .catch(error => {
+        // handle error
+        console.log(error.response);
+      });
     },
 
     addMaps (result) {            
@@ -87,104 +98,41 @@ export default {
       }
     },
 
-    getInventory () {
-      const url = process.env.VUE_APP_API + '/api/items';
-      
-      const body = new FormData();
-      body.set('accountName', this.accountName);
-      body.set('sessionId', this.sessionId);
-      body.set('character', this.character.name);
-      
-      this.promises.push(axios.post(url, body))
-    },
-
-    getItems () {
-      this.foundMaps = [];
-      this.promises = [];
-
-      const baseUrl = process.env.VUE_APP_API + '/api/stashes';
-
-      if (this.stashes.includes("inv")) {
-        this.getInventory();
-      }
-
-      this.stashes.forEach(id => {
-        // filter out the 'inv' entry and handle separately
-        const parsedId = parseInt(id);
-        
-        if (!isNaN(parsedId)) {
-          this.promises.push(axios.get(baseUrl, {
-            params: {
-              accountName: this.accountName,
-              sessionId: this.sessionId,
-              league: this.character.league,
-              tabs: 0,
-              tabIndex: parsedId
-            }
-          }));
-        }
-      }); 
-      
-      axios.all(this.promises)
-      .then(results => {
-        results.forEach(r => this.addMaps(r));
-        this.$emit('items-loaded', this.foundMaps);
-      });
-    },
-
-    getStashes () {   
-      let baseUrl = process.env.VUE_APP_API + '/api/stashes';
-
-      axios.get(baseUrl, {
-        params: {
-          accountName: this.accountName,
-          sessionId: this.sessionId,
-          league: this.character.league,
-          tabs: 1
-        }
-      })
-      .then(response => {
-        if (response.data) {
-          this.tabs = response.data.tabs;
-          localStorage.setItem('stashTabs', JSON.stringify(this.tabs));
-        }
-      })
-      .catch(error => {
-        console.log(error.request);
-        console.log(error.message);
-        console.log(error.response.data);
-      });
-    },
-
     getCharacters () {
-      const url = process.env.VUE_APP_API + '/api/characters';
-      const body = new FormData();
-      body.set('accountName', this.accountName);
-      body.set('sessionId', this.sessionId);
-    
-      axios.post(url, body)
-      .then(response => {
-        this.characters.splice(0, this.characters.length - 1);
-        if (response.data) {
-          response.data.forEach(item => {
-            this.characters.push(item);
-            if (item.lastActive) {
-              this.character = item
-            }
-          });
-        }
+      this.api = new Api(this.accountName, this.sessionId);
+      
+      this.api.getCharacters()
+      .then(characters => {
+        this.characters = characters;
+        this.character = characters.find(c => c.lastActive);
 
         localStorage.setItem('sessionId', this.sessionId);
         localStorage.setItem('accountName', this.accountName);
         localStorage.setItem('characters', JSON.stringify(this.characters));
         localStorage.setItem('character', JSON.stringify(this.character));
-
-        this.getStashes();
+      })
+      .then(() => this.api.getStashes(this.character.league))
+      .then(tabs => {
+        this.tabs = tabs;
+        localStorage.setItem('stashTabs', JSON.stringify(this.tabs));
       })
       .catch(error => {
-        console.log(error.request);
-        console.log(error.message);
-        console.log(error.response.data);
+        // handle error
+        console.log(error.response);
+      });
+    },
+
+    getItems () {
+      this.foundMaps = [];
+
+      this.api.getItems(this.character, this.stashes)
+      .then(results => {
+        results.forEach(r => this.addMaps(r));
+        this.$emit('items-loaded', this.foundMaps);
+      })
+      .catch(error => {
+        // handle error
+        console.log(error.response);        
       });
     }
   },
@@ -238,27 +186,25 @@ button {
 }
 
 div.stashes {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-div.big {
-  flex: 3 2 50%;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(8, 20px);
+  grid-template-columns: repeat(auto-fill, min-content);
 }
 
 div.stash {
-  flex: 1 0 36%;
   margin: 2px;
 }
 
 div.inputs {
-  display: inline-flex;
-  justify-content: center;
-  width: 95%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  grid-auto-flow: row;
+  justify-items: center;
+  width: 100%;
 }
 
 div.input {
-  flex-grow: 1;
   padding: 10px;
 }
 

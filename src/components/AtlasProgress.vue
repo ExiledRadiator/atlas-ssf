@@ -1,7 +1,8 @@
 <template>
-  <div>
-    <div class="tier" v-for="tier in tiers">
-      <div><h3>Tier {{ tier.number }} </h3>
+  <div class="tiers">
+    <div class="tier" v-for="tier in tiers" :class="{'shaded': shadeBackground(tier.number)}">
+      <div>
+        <h3>Tier {{ tier.number }} </h3>
         <a @click="toggleClicked(tier.number)">
           <span v-if="allChecked[tier.number - 1]">Uncheck all</span>
           <span v-else>Check all</span>
@@ -112,8 +113,24 @@ export default {
 
     hasMap (mapName) {
      const map = this.maps.filter(m => m.name == mapName);
-     
      return (map[0] ? this.have[map[0].id] : false);
+    },
+
+    shadeBackground (id) {
+      const row = Math.ceil(id / 2);
+      let shade;
+
+      if ((row % 2 == 1) && (id % 2 == 0)) {
+        shade = true;
+      }
+      else if ((row % 2 == 0) && (id % 2 == 1)) {
+        shade = true;
+      }
+      else {
+        shade = false;
+      }
+
+      return shade;
     }
   },
   computed: {
@@ -191,8 +208,19 @@ h3 {
   padding-right: 20px;
 }
 
+.tiers {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 20px;
+  padding-top: 30px;
+  padding-left: 10px;
+}
+
 .tier {
-  padding: 10px 30px;
+  min-width: 485px;
+  max-width: 600px;
+  padding: 10px;
 }
 
 table {
@@ -212,11 +240,16 @@ td.checkbox, th.checkbox {
 }
 
 td.map, th.map {
-  width: 100px;
+  width: 120px;
+  min-width: min-content;
   padding-left: 20px;
 }
 
 input[type=checkbox] {
   transform: scale(2);
+}
+
+.shaded {
+  background: #262627;
 }
 </style>
