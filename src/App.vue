@@ -1,7 +1,9 @@
 <template>
-  <div id="app">
-    <CharacterSelection @items-loaded="updateItems" />
-    <AtlasProgress :items="items" />
+  <div class="container">
+    <div id="app">
+      <CharacterSelection @items-loaded="updateItems" />
+      <AtlasProgress :items="items" />
+    </div>
   </div>
 </template>
 
@@ -9,7 +11,6 @@
 import AtlasProgress from './components/AtlasProgress.vue'
 import CharacterSelection from './components/CharacterSelection.vue'
 import maps from './maps.js'
-import { longStackSupport } from 'q';
 
 export default {
   name: 'app',
@@ -46,7 +47,9 @@ export default {
 </script>
 
 <style>
-#app {
+.container {
+  display: flex;
+  justify-content: center;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
