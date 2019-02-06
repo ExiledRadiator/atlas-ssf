@@ -15,6 +15,7 @@ const tiers = [
   { number: 14, notes: "Drops in / Upgrades from" },
   { number: 15, notes: "Drops in / Upgrades from" },
   { number: 16, notes: "Drops in / Upgrades from" },
+  { number: 17, notes: "Drops in / Upgrades from" },
 ];
 
 export default tiers;

@@ -20,13 +20,13 @@ export default {
   },
   data () {
     return {
-      items: new Array(100).fill(false),
+      items: new Array(150).fill(false),
       mapCounts: {}
     }
   },
   methods: {
     updateItems (items) {
-      const newArray = new Array(100).fill(false);
+      const newArray = new Array(150).fill(false);
       
       const matchingMapIds = items.map(i => {
         const matchedMap = maps.find(m => i.typeLine.includes(m.name));

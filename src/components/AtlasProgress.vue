@@ -70,10 +70,10 @@ export default {
   data () {
     return {
       have: this.items,
-      completed: new Array(100).fill(false),
-      bonused: new Array(100).fill(false),
-      allChecked: new Array(16).fill(false),
-      tierHidden: new Array(16).fill(false),
+      completed: new Array(150).fill(false),
+      bonused: new Array(150).fill(false),
+      allChecked: new Array(17).fill(false),
+      tierHidden: new Array(17).fill(false),
       hideAll: false,
       tierColumns: 2
     }
@@ -132,7 +132,7 @@ export default {
 
     toggleAllHidden () {
       this.hideAll = !this.hideAll;
-      this.tierHidden = new Array(16).fill(this.hideAll);
+      this.tierHidden = new Array(17).fill(this.hideAll);
     },
 
     hasMap (mapName) {
@@ -314,7 +314,7 @@ td.checkbox, th.checkbox {
 }
 
 td.map, th.map {
-  width: 120px;
+  width: 125px;
   min-width: min-content;
   padding-left: 20px;
 }
