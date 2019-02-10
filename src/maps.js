@@ -53,7 +53,7 @@ const maps = [
   { id: 51, name: 'Lava Chamber', tier: 7, upgradesFrom: ['Volcano'], upgradesTo: ['Overgrown Ruin'], isUnique: false },
   { id: 52, name: 'Conservatory', tier: 7, upgradesFrom: ['Precinct'], upgradesTo: ['Sepulchre'], isUnique: false },
   { id: 53, name: 'Geode', tier: 7, upgradesFrom: ['Sulphur Vents'], upgradesTo: ['Mineral Pools'], isUnique: false },
-  { id: 54, name: 'Primordial Pool', tier: 7, upgradesFrom: ['Ashen  Wood'], upgradesTo: ['Promenade'], isUnique: false },
+  { id: 54, name: 'Primordial Pool', tier: 7, upgradesFrom: ['Ashen Wood'], upgradesTo: ['Promenade'], isUnique: false },
   { id: 55, name: 'Underground River', tier: 7, upgradesFrom: ['Academy', 'Haunted Mansion'], upgradesTo: ['Laboratory'], isUnique: false },
   { id: 56, name: 'Cells', tier: 7, upgradesFrom: ['Haunted Mansion'], upgradesTo: ['Laboratory'], isUnique: false },
   { id: 57, name: 'Bazaar', tier: 7, upgradesFrom: ['Phantasmagoria'], upgradesTo: ['Shore', 'Arachnid Nest'], isUnique: false },
