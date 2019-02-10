@@ -138,6 +138,7 @@ const maps = [
   { id: 136, name: 'Maze of the Minotaur', tier: 16, upgradesFrom: ['Primordial Blocks'], upgradesTo: ['The Shaper\'s Realm'], isUnique: false },
   { id: 137, name: 'Forge of the Phoenix', tier: 16, upgradesFrom: ['Summit'], upgradesTo: ['The Shaper\'s Realm'], isUnique: false },
   { id: 138, name: 'The Shaper\'s Realm', tier: 17, upgradesFrom: ['Lair of the Hydra', 'Pit of the Chimera', 'Maze of the Minotaur', 'Forge of the Phoenix'], upgradesTo: [''], isUnique: false },
+  { id: 139, name: 'Vaal Temple', tier: 16, upgradesFrom: ['T15 map + Vaal Orb'], upgradesTo: [], isUnique: false },
 ];
 
 export default maps;
