@@ -8,18 +8,18 @@ class APIService {
     this.promises = [];
 
     this.request = axios.create({
-      baseURL: process.env.VUE_APP_API + '/api'
+      baseURL: process.env.VUE_APP_API + '/api/' + this.accountName
     });
   }
 
   async getCharacters () {
     const path = 'characters';
-    const body = new FormData();
     
-    body.set('accountName', this.accountName);
-    body.set('sessionId', this.sessionId);
-    
-    const response = await this.request.post(path, body); 
+    const response = await this.request.get(path, {
+      params: {
+        sessionId: this.sessionId
+      }
+    });
 
     return response.data;
   }
@@ -29,10 +29,8 @@ class APIService {
 
     const response = await this.request.get(path, {
       params: {
-        accountName: this.accountName,
-        sessionId: this.sessionId,
         league: league,
-        tabs: 1
+        sessionId: this.sessionId
       }
     });
 
@@ -43,7 +41,7 @@ class APIService {
     this.promises = [];
     const path = 'stashes';
 
-    if (stashes.includes('inv')) {
+    if (stashes.includes(character.name + '-inv')) {
       this.getInventory(character);
     }
 
@@ -52,13 +50,10 @@ class APIService {
       const parsedId = parseInt(id);
       
       if (!isNaN(parsedId)) {
-        this.promises.push(this.request.get(path, {
+        this.promises.push(this.request.get(path + '/' + parsedId, {
           params: {
-            accountName: this.accountName,
-            sessionId: this.sessionId,
             league: character.league,
-            tabs: 0,
-            tabIndex: parsedId
+            sessionId: this.sessionId
           }
         }));
       }
@@ -70,14 +65,13 @@ class APIService {
   }
 
   getInventory (character) {
-    const url = 'items';
-    const body = new FormData();
-
-    body.set('accountName', this.accountName);
-    body.set('sessionId', this.sessionId);
-    body.set('character', character.name);
+    const path = 'characters/' + character.name;
     
-    this.promises.push(this.request.post(url, body))
+    this.promises.push(this.request.get(path, {
+      params: {
+        sessionId: this.sessionId
+      }
+    }));
   }
   
 }

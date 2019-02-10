@@ -30,7 +30,7 @@
         <legend>Locations to include</legend>
         <div id="stashes" class="stashes">
           <div class="stash" v-show="character.name">
-            <input type="checkbox" class="stash-checkbox" id="inventory" v-model="stashes" value="inv">
+            <input type="checkbox" class="stash-checkbox" id="inventory" v-model="stashes" :value="character.name + '-inv'">
             <label for="inventory" class="checkbox" checked>Character Inventory</label>
           </div>
           <div v-for="tab in stashTabs" :key="tab.id" class="stash">
@@ -91,11 +91,11 @@ export default {
         // treat response from inventory differently
         // inventory call responds with information about character
         // stash calls don't
-        if (result.data.character) {
-          items = result.data.items.filter(i => i.inventoryId === "MainInventory");
+        if (result.data.items) {
+          items = result.data.items;
         }
         else {
-          items = result.data.items;
+          items = result.data;
         }
 
         const maps = items.filter(i => i.category.maps && i.typeLine.includes("Map"));
