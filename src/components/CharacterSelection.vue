@@ -8,9 +8,11 @@
 
         <label for="accountName" class="text">Account Name</label>
         <input type="text" placeholder="account name" id="accountName" v-model="accountName">
+        <div id="error-message">{{ errorMessage }}</div>
       </fieldset>
       
       <button type="button" @click="getCharacters" class="input">Load Characters</button>
+      
     </div>
 
     <div class="input" id="characters">
@@ -63,10 +65,11 @@ export default {
       accountName: '',
       characters: [],
       character: '--Select a character--',
-      stashes: ['inv'],
+      stashes: [],
       stashTabs: [],
       foundMaps: [],
-      api: null
+      api: null,
+      errorMessage: ""
     }
   },
   methods: {
@@ -105,7 +108,14 @@ export default {
 
     getCharacters () {
       this.api = new Api(this.accountName, this.sessionId);
-      
+      this.stashes = [];
+      this.stashTabs = [];
+      this.character = '--Select a character--'
+      this.characters = [];
+      localStorage.removeItem('stashes');
+      localStorage.removeItem('stashTabs');
+      this.errorMessage = "";
+
       this.api.getCharacters()
       .then(characters => {
         this.characters = characters;
@@ -124,24 +134,22 @@ export default {
       .catch(error => {
         const errorUrl = error.request.responseURL;
 
-        if (errorUrl.includes('/api/characters')) {
-          console.log('Error retrieving characters.  Confirm your POESESSID and account name');
-          this.characters = [];
-          this.character = '--Select a character--';
-          this.stashTabs = [];
+        if (errorUrl.includes('characters')) {
+          this.errorMessage = 'Error retrieving characters.  Confirm your POESESSID and account name are correct.';
 
           localStorage.setItem('characters', JSON.stringify(this.characters));
           localStorage.setItem('character', JSON.stringify(this.character));
           localStorage.setItem('stashTabs', JSON.stringify(this.stashTabs));
         }
-        else if (errorUrl.includes('/api/stashes')) {
-          console.log('Error retrieving stashes.  Confirm your account name is correct.');          
+        else if (errorUrl.includes('stashes')) {
+          this.errorMessage = 'Error retrieving stashes.  Confirm your account name is correct.';          
         }
       });
     },
 
     getItems () {
       this.foundMaps = [];
+      this.errorMessage = "";
 
       this.api.getItems(this.character, this.stashes)
       .then(results => {
@@ -228,6 +236,12 @@ button {
 
 #account {
   grid-area: account;
+  width: 400px;
+  position: relative;
+}
+
+#account > fieldset {
+  padding-bottom: 10px;
 }
 
 #legend {
@@ -275,5 +289,13 @@ a {
 
 input[type=checkbox].stash-checkbox {
   transform: scale(1.25);
+}
+
+#error-message {
+  color: red;
+  font-size: 10pt;
+  padding-top: 5px;
+  overflow: hidden;
+  white-space:normal;
 }
 </style>
