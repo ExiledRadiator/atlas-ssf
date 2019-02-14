@@ -1,19 +1,10 @@
 <template>
   <div class="inputs">
-    <div class="input" id="account">
-      <fieldset>
-        <legend>Account Information</legend>
-        <label for="sessionId" class="text">POESESSID <a href="what-is-a-session-id.html">What's this?</a></label>
-        <input type="text" placeholder="0e6c4a14d10240be23a4d6bb265accaa" id="sessionId" v-model="sessionId">
-
-        <label for="accountName" class="text">Account Name</label>
-        <input type="text" placeholder="account name" id="accountName" v-model="accountName">
-        <div id="error-message">{{ errorMessage }}</div>
-      </fieldset>
-      
-      <button type="button" @click="getCharacters" class="input">Load Characters</button>
-      
-    </div>
+    <AccountInformation class="input" id="account"
+      loadText="Load Characters"
+      :errorMessage="errorMessage"
+      @load-account="getCharacters"
+      @api="setApi" />
 
     <div class="input" id="characters">
       <label for="characterList" class="text">Characters</label>
@@ -41,7 +32,7 @@
           </div>
         </div>
       </fieldset>
-      <button type="button" @click="getItems" class="input">Load Maps</button>
+      <button type="button" @click="getItems">Load Maps</button>
       <div class="note" id="notes">
           Note: Clicking 'Load Maps' will overwrite the checkboxes in the 'Have' column.<br />
           <b>Also Note</b>: Premium 'Maps' stash tabs currently don't return any information.  GGG plz.
@@ -53,16 +44,16 @@
 <script>
 import Api from '../APIService.js'
 import LegendDisplay from './LegendDisplay'
+import AccountInformation from './AccountInformation'
 
 export default {
   name: 'CharacterSelection',
   components: {
     LegendDisplay,
+    AccountInformation,
   },
   data () {
     return {
-      sessionId: '',
-      accountName: '',
       characters: [],
       character: '--Select a character--',
       stashes: [],
@@ -78,7 +69,17 @@ export default {
       
       this.api.getStashes(this.character.league)
       .then(tabs => {
-        this.stashTabs = tabs;
+        const displayTabs = tabs.filter(t => {
+          if (t.type !== "CurrencyStash" &&
+            t.type !== "FragmentStash" &&
+            t.type !== "DivinationCardStash" &&
+            t.type !== "EssenceStash") {
+              
+              return true;
+            }
+        });
+
+        this.stashTabs = displayTabs;
         localStorage.setItem('stashTabs', JSON.stringify(this.stashTabs));
       })
       .catch(error => {
@@ -106,8 +107,8 @@ export default {
       }
     },
 
-    getCharacters () {
-      this.api = new Api(this.accountName, this.sessionId);
+    getCharacters (data) {
+      this.api = new Api(data.accountName, data.sessionId);
       this.stashes = [];
       this.stashTabs = [];
       this.character = '--Select a character--'
@@ -121,14 +122,24 @@ export default {
         this.characters = characters;
         this.character = characters.find(c => c.lastActive);
 
-        localStorage.setItem('sessionId', this.sessionId);
-        localStorage.setItem('accountName', this.accountName);
+        localStorage.setItem('sessionId', data.sessionId);
+        localStorage.setItem('accountName', data.accountName);
         localStorage.setItem('characters', JSON.stringify(this.characters));
         localStorage.setItem('character', JSON.stringify(this.character));
       })
       .then(() => this.api.getStashes(this.character.league))
       .then(tabs => {
-        this.stashTabs = tabs;
+        const displayTabs = tabs.filter(t => {
+          if (t.type !== "CurrencyStash" &&
+            t.type !== "FragmentStash" &&
+            t.type !== "DivinationCardStash" &&
+            t.type !== "EssenceStash") {
+              
+              return true;
+            }
+        });
+
+        this.stashTabs = displayTabs;
         localStorage.setItem('stashTabs', JSON.stringify(this.stashTabs));
       })
       .catch(error => {
@@ -161,23 +172,17 @@ export default {
         // handle error
         console.log(error);        
       });
+    },
+
+    setApi (api) {
+      this.api = api;
     }
   },
   created () {
-    const sessionId = localStorage.getItem('sessionId');
-    const accountName = localStorage.getItem('accountName');
     const characters = JSON.parse(localStorage.getItem('characters'));
     const character = JSON.parse(localStorage.getItem('character'));
     const stashTabs = JSON.parse(localStorage.getItem('stashTabs'));
     const stashes = JSON.parse(localStorage.getItem('stashes'));
-
-    if (sessionId) {
-      this.sessionId = sessionId;
-    }
-
-    if (accountName) {
-      this.accountName = accountName;
-    }
 
     if (characters) {
       this.characters = characters;
@@ -189,12 +194,6 @@ export default {
 
     if (stashTabs) {
       this.stashTabs = stashTabs;
-    }
-
-    if (!this.api) {
-      if (this.sessionId && this.accountName) {
-        this.api = new Api(this.accountName, this.sessionId);
-      }
     }
 
     if (stashes) {
@@ -236,12 +235,6 @@ button {
 
 #account {
   grid-area: account;
-  width: 400px;
-  position: relative;
-}
-
-#account > fieldset {
-  padding-bottom: 10px;
 }
 
 #legend {
@@ -279,10 +272,6 @@ div.note {
   margin-left: 20px;
 }
 
-#sessionId {
-  font-size: 8pt;
-}
-
 a {
   font-size: 8pt;
 }
@@ -291,11 +280,5 @@ input[type=checkbox].stash-checkbox {
   transform: scale(1.25);
 }
 
-#error-message {
-  color: red;
-  font-size: 10pt;
-  padding-top: 5px;
-  overflow: hidden;
-  white-space:normal;
-}
+
 </style>
