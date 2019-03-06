@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import Api from '../APIService.js'
+
 export default {
   name: 'AccountInformation',
   props: ['loadText', 'errorMessage'],

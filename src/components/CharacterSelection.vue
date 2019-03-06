@@ -65,8 +65,17 @@ export default {
   },
   methods: {
     characterChanged () {
+      while (this.stashes.find(s => s.toString().includes('-inv'))) {
+        const invIndex = this.stashes.findIndex(s => s.toString().includes('-inv'));
+
+        if (invIndex > -1) {
+          this.stashes.splice(invIndex, 1);
+        }
+      }
+
       localStorage.setItem('character', JSON.stringify(this.character));
-      
+      localStorage.setItem('stashes', JSON.stringify(this.stashes));
+
       this.api.getStashes(this.character.league)
       .then(tabs => {
         const displayTabs = tabs.filter(t => {

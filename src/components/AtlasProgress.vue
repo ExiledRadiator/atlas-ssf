@@ -21,7 +21,8 @@
             <thead>
               <th class="checkbox centered">Have</th>
               <th class="checkbox centered">Compl.</th>
-              <th class="checkbox centered">Bonused</th>
+              <th class="checkbox centered">Bonus</th>
+              <th class="checkbox centered">Soul</th>
               <th class="map left">Map</th>
               <th class="left">{{ tier.notes }}</th>
             </thead>
@@ -36,15 +37,22 @@
                 <td class="checkbox centered" :class="'tier-' + tier.number">
                   <input type="checkbox" :id="'bonused-' + map.id" :checked="bonused[map.id]" @input="updateBonused">
                 </td>
-                <td class="map left" :class="{ 'done': completed[map.id] }">{{ map.name }}</td>
+                <td class="checkbox centered" :class="'tier-' + tier.number">
+                  <input v-if="map.pantheon" type="checkbox" 
+                    :id="'pantheon-' + map.id" 
+                    :title="map.pantheonText"
+                    :checked="pantheon[map.id]"
+                    @input="updatePantheon">
+                </td>
+                <td class="map left" :class="{ 'done': completed[map.id], 'unique': map.unique }">{{ map.name }}</td>
                 <td class="left" :class="{ 'done': have[map.id] }">
                   <div v-if="map.upgradesFrom.length > 0">
                     <MapDisplay v-for="(upgradeMap, index) in map.upgradesFrom" 
                       :length="map.upgradesFrom.length"
                       :index="index" 
-                      :mapName="upgradeMap"
-                      :hasMap="hasMap(upgradeMap)"
-                      :mapCount="mapCount(upgradeMap)" />
+                      :mapName="upgradeMap.name"
+                      :hasMap="hasMap(upgradeMap.id)"
+                      :mapCount="mapCount(upgradeMap.id)" />
                   </div>
                   <div v-if="completed[map.id]"></div>
                 </td>
@@ -70,8 +78,9 @@ export default {
   data () {
     return {
       have: this.items,
-      completed: new Array(150).fill(false),
-      bonused: new Array(150).fill(false),
+      completed: new Array(maps.length).fill(false),
+      bonused: new Array(maps.length).fill(false),
+      pantheon: new Array(maps.length).fill(false),
       allChecked: new Array(17).fill(false),
       tierHidden: new Array(17).fill(false),
       hideAll: false,
@@ -80,7 +89,19 @@ export default {
   },
   methods: {
     mapsInTier (tier) {
-      return maps.filter(m => m.tier == tier);
+      const tierMaps = maps.filter(m => m.tier == tier);
+
+      return tierMaps.sort((a,b) => {
+        if (a.unique && !b.unique) {
+          return 1;
+        }
+        else if (!a.unique && b.unique) {
+          return -1;
+        }
+        else {
+          return a.id - b.id;
+        }
+      });
     },
 
     // Need to use .splice() to update Arrays in data
@@ -99,10 +120,21 @@ export default {
 
     updateBonused (event) {
       const id = convertId(event.target.id);
+
       this.bonused.splice(id, 1, event.target.checked);
       localStorage.setItem('bonusedMaps', this.bonused);
+
+      if (event.target.checked) {
+        this.completed.splice(id, 1, event.target.checked);
+        localStorage.setItem('completedMaps', this.completed);
+      }
     },
 
+    updatePantheon (event) {
+      const id = convertId(event.target.id);  
+      this.pantheon.splice(id, 1, event.target.checked);
+      localStorage.setItem('pantheonMaps', this.pantheon);
+    },
     toggleClicked (tierNumber) {
       const checkboxesInTier = Array.from(document.getElementsByClassName('tier-' + tierNumber));
       const checked = this.allChecked[tierNumber - 1];
@@ -135,23 +167,15 @@ export default {
       this.tierHidden = new Array(17).fill(this.hideAll);
     },
 
-    hasMap (mapName) {
-     const map = this.maps.filter(m => m.name == mapName);
-     return (map[0] ? this.have[map[0].id] : false);
+    hasMap (mapId) {
+      return (this.have[mapId] ? this.have[mapId] : false);
     },
 
-    mapCount (mapName) {
-      const map = this.maps.filter(m => m.name == mapName);
-      
-      if (map.length == 0) {
-        return 0;
-      }
-
-      const mapId = map[0].id;
+    mapCount (mapId) {
       let count;
 
       if (this.mapCounts[mapId]) {
-        count = this.mapCounts[mapId];
+        count = parseInt(this.mapCounts[mapId]);
       }
       else {
         count = 0;
@@ -218,6 +242,7 @@ export default {
     const haveMaps = localStorage.haveMaps;
     const completedMaps = localStorage.completedMaps;
     const bonusedMaps = localStorage.bonusedMaps;
+    const pantheonMaps = localStorage.pantheonMaps;
     const allChecked = localStorage.allChecked;
     const tierHidden = localStorage.tierHidden;
     
@@ -234,6 +259,11 @@ export default {
     if (bonusedMaps) {
       const bonusedMapsArray = bonusedMaps.split(',').map(i => stringToBoolean(i));
       this.bonused = bonusedMapsArray;
+    }
+
+    if (pantheonMaps) {
+      const pantheonMapsArray = pantheonMaps.split(',').map(i => stringToBoolean(i));
+      this.pantheon = pantheonMapsArray;
     }
 
     if (allChecked) {
@@ -276,6 +306,10 @@ h3 {
   color: gray;
 }
 
+.unique {
+  color: rgb(175,96,37)
+}
+
 a, a:visited {
   color: whitesmoke;
   text-decoration: underline;
@@ -309,8 +343,11 @@ table {
   text-align: left;
 }
 
+th {
+  font-size: 9pt;
+}
 td.checkbox, th.checkbox {
-  width: 55px;
+  width: 40px;
 }
 
 td.map, th.map {
@@ -335,7 +372,7 @@ input[type=checkbox] {
   font-size: 12pt;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 850px) {
   .tiers {
     display: grid;
     grid-auto-flow: row;

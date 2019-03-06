@@ -20,13 +20,14 @@ export default {
   },
   data () {
     return {
-      items: new Array(150).fill(false),
-      mapCounts: {}
+      items: new Array(maps.length).fill(false),
+      mapCounts: new Object(),
+      atlasVersion: 3.6
     }
   },
   methods: {
     updateItems (items) {
-      const newArray = new Array(150).fill(false);
+      const newArray = new Array(maps.length).fill(false);
       
       const matchingMapIds = items.map(i => {
         const matchedMap = maps.find(m => i.typeLine.includes(m.name));
@@ -53,12 +54,35 @@ export default {
     }
   },
   created () {
+    const savedAtlasVersion = localStorage.getItem('atlasVersion');
     const mapCounts = localStorage.getItem('mapCounts');
+
+    if (savedAtlasVersion) {
+      if (savedAtlasVersion < this.atlasVersion) {
+        resetAtlas(this.atlasVersion);
+      }
+    }
+    else {
+      resetAtlas(this.atlasVersion);
+    }
 
     if (mapCounts) {
       this.mapCounts = mapCounts;
     }
   }
+}
+
+function resetAtlas(version) {
+  let keys = Object.keys(localStorage);
+  let length = keys.length;
+  
+  for (let i = 0; i < length; i++) {
+    if (keys[i] !== 'accountName' && keys[i] !== 'sessionId') {
+      localStorage.removeItem(keys[i]);
+    }
+  }
+
+  localStorage.setItem('atlasVersion', version);
 }
 </script>
 
