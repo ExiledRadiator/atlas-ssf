@@ -10,7 +10,7 @@
       <div id="error-message">{{ errorMessage }}</div>
     </fieldset>
     
-    <button type="button" @click="loadAccount">{{ loadText }}</button>
+    <button type="button" @click="loadAccount" :disabled="loading">{{ loadText }}</button>
   </div>
 </template>
 
@@ -19,7 +19,7 @@ import Api from '../APIService.js'
 
 export default {
   name: 'AccountInformation',
-  props: ['loadText', 'errorMessage'],
+  props: ['loading', 'errorMessage'],
   data () {
     return {
       sessionId: '',
@@ -48,6 +48,11 @@ export default {
 
     if (this.sessionId && this.accountName) {
         this.$emit('api', new Api(this.accountName, this.sessionId));
+    }
+  },
+  computed: {
+    loadText () {
+      return this.loading ? "Loading..." : "Load Characters";
     }
   }
 }

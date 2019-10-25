@@ -8,41 +8,49 @@
 </template>
 
 <script>
-import AtlasProgress from './components/AtlasProgress.vue'
-import CharacterSelection from './components/CharacterSelection.vue'
-import maps from './maps.js'
+import AtlasProgress from "./components/AtlasProgress.vue";
+import CharacterSelection from "./components/CharacterSelection.vue";
+import maps from "./maps.js";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
     AtlasProgress,
     CharacterSelection
   },
-  data () {
+  data() {
     return {
       items: new Array(maps.length).fill(false),
       mapCounts: new Object(),
       atlasVersion: 3.6
-    }
+    };
   },
   methods: {
-    updateItems (items) {
+    updateItems(items) {
       const newArray = new Array(maps.length).fill(false);
-      
+
       const matchingMapIds = items.map(i => {
-        const matchedMap = maps.find(m => i.typeLine.includes(m.name));
+        const matchedMap = maps.find(m => {
+          // some maps include other map's name, e.g. "Spider Lair" contains "Lair"
+          if (i.typeLine.includes("Spider Lair")) {
+            return i.typeLine.includes(m.name) && m.name !== "Lair";
+          } else {
+            return i.typeLine.includes(m.name);
+          }
+        });
+
         if (matchedMap) {
           return matchedMap.id;
         }
       });
-      
+
       // de-duplicate array
       const uniqueMapIds = Array.from(new Set(matchingMapIds));
-      
+
       // update blank array with maps that are in inv or stashes
-      uniqueMapIds.forEach(i => newArray[i] = true);
+      uniqueMapIds.forEach(i => (newArray[i] = true));
       this.items = newArray;
-      localStorage.setItem('haveMaps', this.items);
+      localStorage.setItem("haveMaps", this.items);
 
       const mapCounts = matchingMapIds.reduce((prev, id) => {
         prev[id] = (prev[id] || 0) + 1;
@@ -50,19 +58,18 @@ export default {
       }, {});
 
       this.mapCounts = mapCounts;
-      localStorage.setItem('mapCounts', JSON.stringify(this.mapCounts));
+      localStorage.setItem("mapCounts", JSON.stringify(this.mapCounts));
     }
   },
-  created () {
-    const savedAtlasVersion = localStorage.getItem('atlasVersion');
-    const mapCounts = localStorage.getItem('mapCounts');
+  created() {
+    const savedAtlasVersion = localStorage.getItem("atlasVersion");
+    const mapCounts = localStorage.getItem("mapCounts");
 
     if (savedAtlasVersion) {
       if (savedAtlasVersion < this.atlasVersion) {
         resetAtlas(this.atlasVersion);
       }
-    }
-    else {
+    } else {
       resetAtlas(this.atlasVersion);
     }
 
@@ -70,19 +77,19 @@ export default {
       this.mapCounts = mapCounts;
     }
   }
-}
+};
 
 function resetAtlas(version) {
   let keys = Object.keys(localStorage);
   let length = keys.length;
-  
+
   for (let i = 0; i < length; i++) {
-    if (keys[i] !== 'accountName' && keys[i] !== 'sessionId') {
+    if (keys[i] !== "accountName" && keys[i] !== "sessionId") {
       localStorage.removeItem(keys[i]);
     }
   }
 
-  localStorage.setItem('atlasVersion', version);
+  localStorage.setItem("atlasVersion", version);
 }
 </script>
 
@@ -90,7 +97,7 @@ function resetAtlas(version) {
 .container {
   display: flex;
   justify-content: center;
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: whitesmoke;
